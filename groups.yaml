@@ -1,0 +1,12 @@
+everyone:
+  name: Everyone
+  entities:
+    - device_tracker.pixel_2_xl
+    - device_tracker.genn_s_iphone
+
+lights:
+  name: All Lights
+  entities:
+    - light.bedside_lamp
+    - light.lamp
+    - light.study_light

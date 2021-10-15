@@ -1,0 +1,178 @@
+
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+homeassistant:
+  external_url: https://greatpate.duckdns.org:8123
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+discovery:
+
+lifx:
+  light:
+    - port: 56700
+    - broadcast: 192.168.0.101
+    - broadcast: 192.168.0.102
+    - broadcast: 192.168.0.103
+
+# device_tracker:
+  # - platform: netgear
+    # host: 192.168.0.1
+    # port: 80
+    # username: admin
+    # password: P@t31234
+    # interval_seconds: 10
+    # consider_home: 180
+    # new_device_defaults:
+    # track_new_devices: true
+
+http:
+  ssl_certificate: /dehydrated/certs/greatpate.duckdns.org/fullchain.pem
+  ssl_key: /dehydrated/certs/greatpate.duckdns.org/privkey.pem
+  # base_url: greatpate.duckdns.org:8123
+
+duckdns: 
+  domain: greatpate
+  access_token: "8366e308-c8b9-4344-b828-9ece84be8de7"
+
+google_assistant:
+  project_id: home-assistant-4f436
+  service_account: !include SERVICE_ACCOUNT.json
+  report_state: true
+  exposed_domains:
+    - light
+    - sensor
+    - lock
+    - cover
+    - switch
+    - media_player
+  secure_devices_pin : "1234"
+
+wake_on_lan: # enables `wake_on_lan` integration
+
+webostv:
+  host: 192.168.0.13
+  name: Living Room TV
+  #other settings
+  turn_on_action:
+    service: wake_on_lan.send_magic_packet
+    data:
+      mac: 24-E8-53-D7-4D-E2
+      broadcast_address: 192.168.0.13
+
+media_player:
+
+notify:
+
+sensor:
+  - platform: energyeasy
+    username: danieljohnpate@gmail.com
+    password: !secret energyeasy_password
+    monitored_variables:
+      - supply_charge
+      - weekday_peak_cost
+      - weekday_offpeak_cost
+      - weekday_shoulder_cost
+      - weekend_offpeak_cost
+      - single_rate_cost
+      - generation_cost
+      - yesterday_user_type
+      - yesterday_usage
+      - yesterday_consumption
+      - yesterday_consumption_peak
+      - yesterday_consumption_offpeak
+      - yesterday_consumption_shoulder
+      - yesterday_generation
+      - yesterday_cost_total
+      - yesterday_cost_consumption
+      - yesterday_cost_generation
+      - yesterday_cost_difference
+      - yesterday_percentage_difference
+      - yesterday_difference_message
+      - yesterday_consumption_difference
+      - yesterday_consumption_change
+      - yesterday_suburb_average
+      - previous_day_usage
+      - previous_day_consumption
+      - previous_day_generation
+      - this_week_user_type
+      - this_week_usage
+      - this_week_consumption
+      - this_week_consumption_peak
+      - this_week_consumption_offpeak
+      - this_week_consumption_shoulder
+      - this_week_generation
+      - this_week_cost_total
+      - this_week_cost_consumption
+      - this_week_cost_generation
+      - this_week_cost_difference
+      - this_week_percentage_difference
+      - this_week_difference_message
+      - this_week_consumption_difference
+      - this_week_consumption_change
+      - this_week_suburb_average
+      - last_week_usage
+      - last_week_consumption
+      - last_week_generation
+      - this_month_user_type
+      - this_month_usage
+      - this_month_consumption
+      - this_month_consumption_peak
+      - this_month_consumption_offpeak
+      - this_month_consumption_shoulder
+      - this_month_generation
+      - this_month_cost_total
+      - this_month_cost_consumption
+      - this_month_cost_generation
+      - this_month_cost_difference
+      - this_month_percentage_difference
+      - this_month_difference_message
+      - this_month_consumption_difference
+      - this_month_consumption_change
+      - this_month_suburb_average
+      - last_month_usage
+      - last_month_consumption
+      - last_month_generation
+
+spotify:
+  client_id: 3e581b7ce6e1435a9eae8dbc1d7faaa6
+  client_secret: 631f4f698fc74472990d3bace6543abe
+
+spotcast:
+  sp_dc: AQDKnjrkrsUdVkB31swOi8MCyPeSC5mr4FNV5v7w7qi79ZtoVTX89RrLa6-VCDxnWfJuHHevMAXuH114hODPl-8l2MKQcuoHbNFglzC0JNQwkV3xT1Hzg-v-gM-Y2UNL4Ghrl2IpaDAC2FqxsE3NZ0B04uT5-1K5pgq-IMlvbQ
+  sp_key: 867a5739-926d-4e3e-ab1e-68f352914dfd
+
+rest_command:
+  reload_meross:
+    url: "https://greatpate.duckdns.org:8123/api/config/config_entries/entry/c5e70c79506884772702f20c3fa61b1e/reload"
+    method: POST
+    headers:
+      authorization: !secret ha_api_token
+      content-type: 'application/json'
+
+# switch:
+#   - platform: flux
+#     lights:
+#       - light.bedside_lamp
+#     name: Fluxer
+#     start_time: "22:00"
+#     stop_time: "23:00"
+#     start_colortemp: 4000
+#     sunset_colortemp: 3000
+#     stop_colortemp: 1900
+#     disable_brightness_adjust: true
+#     mode: xy
+#     transition: 30
+#     interval: 60
+
+octoprint:
+  host: 192.168.0.11
+  api_key: FCCFFF6337D04EFC8358643D0BB144C6
+
+group: !include groups.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml

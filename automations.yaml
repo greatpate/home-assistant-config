@@ -1,0 +1,295 @@
+- id: '1623809577027'
+  alias: Reading time
+  description: ''
+  trigger:
+  - platform: time
+    at: '22:00'
+  condition:
+  - condition: device
+    device_id: 3aab1d30e966e105dcc2aac570130db2
+    domain: device_tracker
+    entity_id: device_tracker.pixel_2_xl
+    type: is_home
+  action:
+  - type: turn_on
+    device_id: d6ab278726d16633fbc8c809c4d53cb1
+    entity_id: light.bedside_lamp
+    domain: light
+    brightness_pct: 30
+  mode: single
+- id: '1623809710796'
+  alias: Sleep time
+  description: ''
+  trigger:
+  - platform: time
+    at: '23:30'
+  condition:
+  - condition: device
+    device_id: 3aab1d30e966e105dcc2aac570130db2
+    domain: device_tracker
+    entity_id: device_tracker.pixel_2_xl
+    type: is_home
+  action:
+  - type: turn_off
+    device_id: d6ab278726d16633fbc8c809c4d53cb1
+    entity_id: light.bedside_lamp
+    domain: light
+  mode: single
+- id: '1623919222737'
+  alias: Light on when we get home
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 3aab1d30e966e105dcc2aac570130db2
+    domain: device_tracker
+    entity_id: device_tracker.pixel_2_xl
+    type: enters
+    zone: zone.home
+  - platform: device
+    device_id: 27da62488a267030d15c0ec3136d1867
+    domain: device_tracker
+    entity_id: device_tracker.genn_s_iphone
+    type: enters
+    zone: zone.home
+  condition:
+  - type: is_illuminance
+    condition: device
+    device_id: a1c2ce283b8e484816e7344f8c34a35b
+    entity_id: sensor.stairs_bottom_sensor_illuminance
+    domain: sensor
+    below: 25
+  action:
+  - type: turn_on
+    device_id: f3d83e7ab73e4b63894767b34bbafad0
+    entity_id: light.lamp
+    domain: light
+    brightness_pct: 80
+  mode: single
+- id: '1624094013128'
+  alias: Cast to Google Hub
+  description: ''
+  use_blueprint:
+    path: kind3r/cast-and-re-cast-a-lovelace-view-to-a-google-hub.yaml
+    input:
+      view: lovelace-home
+      dashboard: lovelace
+      player: media_player.home_hub
+- id: '1624173043072'
+  alias: Light on when Gen gets home
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 27da62488a267030d15c0ec3136d1867
+    domain: device_tracker
+    entity_id: device_tracker.genn_s_iphone
+    type: enters
+    zone: zone.home
+  condition:
+  - type: is_illuminance
+    condition: device
+    device_id: a1c2ce283b8e484816e7344f8c34a35b
+    entity_id: sensor.stairs_bottom_sensor_illuminance
+    domain: sensor
+    below: 25
+  action:
+  - type: turn_on
+    device_id: f3d83e7ab73e4b63894767b34bbafad0
+    entity_id: light.lamp
+    domain: light
+    brightness_pct: 80
+  mode: single
+- id: '1624173177898'
+  alias: Lights On At Sunset
+  description: ''
+  use_blueprint:
+    path: CyanAutomation/lights_on_at_sunset.yaml
+    input:
+      target_light:
+        device_id: f3d83e7ab73e4b63894767b34bbafad0
+      target_brightness: 80
+      elevation_shift: 1
+- id: '1627793437592'
+  alias: Kettle Boiled
+  description: ''
+  trigger:
+  - platform: device
+    type: turned_off
+    device_id: fc174b4a7d8a6f4c513e7e765bd2a29e
+    entity_id: switch.400302078cce4ef2feb0
+    domain: switch
+  condition: []
+  action:
+  - device_id: 3aab1d30e966e105dcc2aac570130db2
+    domain: mobile_app
+    type: notify
+    title: ''
+    message: Kettle Boiled
+  mode: single
+- id: '1631440011610'
+  alias: Turn on the light when the door opens
+  description: ''
+  trigger:
+  - type: opened
+    platform: device
+    device_id: 4b8a8cd09eb96807f74b86de3c59b0fd
+    entity_id: binary_sensor.open_closed_sensor_contact
+    domain: binary_sensor
+  condition:
+  - condition: sun
+    after: sunset
+  action:
+  - type: turn_on
+    device_id: d6ab278726d16633fbc8c809c4d53cb1
+    entity_id: light.bedside_lamp
+    domain: light
+    brightness_pct: 60
+  mode: single
+- id: '1631443531116'
+  alias: Low battery level detection & notification for all battery sensors
+  description: ''
+  use_blueprint:
+    path: sbyx/low-battery-level-detection-notification-for-all-battery-sensors.yaml
+    input:
+      exclude:
+        entity_id:
+        - sensor.genn_s_iphone_battery_level
+        - sensor.pixel_2_xl_battery_level
+      actions:
+      - device_id: 3aab1d30e966e105dcc2aac570130db2
+        domain: mobile_app
+        type: notify
+        title: Low Battery
+        message: A device has a low battery. Better have a look.
+- id: '1631443634931'
+  alias: Stairs bottom light
+  description: ''
+  use_blueprint:
+    path: freakshock88/motion_illuminance_activated_entity.yaml
+    input:
+      motion_sensor: binary_sensor.stairs_bottom_sensor_motion
+      target_entity: switch.stair_lights
+      no_motion_wait: '2'
+      illuminance_sensor: sensor.stairs_bottom_sensor_illuminance
+      illuminance_cutoff: input_number.illuminance_cutoff
+- id: '1631946285056'
+  alias: Stairs top light
+  description: ''
+  use_blueprint:
+    path: freakshock88/motion_illuminance_activated_entity.yaml
+    input:
+      motion_sensor: binary_sensor.stairs_top_sensor_motion_2
+      target_entity: switch.stair_lights
+      illuminance_sensor: sensor.stairs_top_sensor_illuminance_2
+      no_motion_wait: '2'
+      illuminance_cutoff: input_number.illuminance_cutoff
+- id: '1632474565951'
+  alias: Notify when garage door is open for too long
+  description: ''
+  trigger:
+  - platform: device
+    device_id: b69d0132afd9b9e8479bab3500838eb2
+    domain: cover
+    entity_id: cover.garage_door_msg100_main_channel
+    type: opened
+    for:
+      hours: 0
+      minutes: 10
+      seconds: 0
+      milliseconds: 0
+  condition: []
+  action:
+  - device_id: 3aab1d30e966e105dcc2aac570130db2
+    domain: mobile_app
+    type: notify
+    title: Garage Door
+    message: Garage door is still open
+  mode: single
+- id: '1632475209402'
+  alias: Notify when washing finished
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.washer_washer_job_state
+    to: finish
+    from: spin
+    for:
+      hours: 0
+      minutes: 0
+      seconds: 3
+      milliseconds: 0
+  condition: []
+  action:
+  - device_id: 3aab1d30e966e105dcc2aac570130db2
+    domain: mobile_app
+    type: notify
+    title: Washer
+    message: Washing is finished
+  mode: single
+- id: '1632475605963'
+  alias: Notify when print is finished
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.octoprint_current_state
+    from: Printing
+    to: Operational
+  condition: []
+  action:
+  - device_id: 3aab1d30e966e105dcc2aac570130db2
+    domain: mobile_app
+    type: notify
+    title: Print Finished
+    message: Printer finished
+  mode: single
+- alias: Keep Meross running
+  mode: single
+  description: Check Meross down
+  trigger:
+  - platform: state
+    entity_id: cover.garage_door_msg100_main_channel
+    to: unavailable
+    for: 00:05:00
+  condition: []
+  action:
+  - service: rest_command.reload_meross
+    data: {}
+  id: ce57af7f68e44b2291cd7b5b06e9988f
+- id: '1633076889417'
+  alias: Open garage when Gen comes home
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 27da62488a267030d15c0ec3136d1867
+    domain: device_tracker
+    entity_id: device_tracker.genn_s_iphone
+    type: enters
+    zone: zone.home
+  condition: []
+  action:
+  - device_id: b69d0132afd9b9e8479bab3500838eb2
+    domain: cover
+    entity_id: cover.garage_door_msg100_main_channel
+    type: open
+  mode: single
+- id: '1633076933633'
+  alias: Close garage door when Gen leaves
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 27da62488a267030d15c0ec3136d1867
+    domain: device_tracker
+    entity_id: device_tracker.genn_s_iphone
+    type: leaves
+    zone: zone.home
+  condition:
+  - condition: device
+    device_id: b69d0132afd9b9e8479bab3500838eb2
+    domain: cover
+    entity_id: cover.garage_door_msg100_main_channel
+    type: is_open
+  action:
+  - device_id: b69d0132afd9b9e8479bab3500838eb2
+    domain: cover
+    entity_id: cover.garage_door_msg100_main_channel
+    type: close
+  mode: single
