@@ -293,3 +293,89 @@
     entity_id: cover.garage_door_msg100_main_channel
     type: close
   mode: single
+- id: '1634427360127'
+  alias: iOS Action - Close Garage Door
+  description: ''
+  trigger:
+  - platform: event
+    event_type: ios.action_fired
+    event_data:
+      actionName: Close Garage Door
+  condition: []
+  action:
+  - service: cover.close_cover
+    target:
+      entity_id: cover.garage_door_msg100_main_channel
+  mode: single
+- id: '1634428131269'
+  alias: iOS Action - Turn On Kettle
+  description: ''
+  trigger:
+  - platform: event
+    event_type: ios.action_fired
+    event_data:
+      actionName: Turn On Kettle
+  condition: []
+  action:
+  - service: switch.turn_on
+    target:
+      entity_id: switch.kettlestart
+  mode: single
+- id: '1634428225857'
+  alias: iOS Action - Lamp
+  description: ''
+  trigger:
+  - platform: event
+    event_type: ios.action_fired
+    event_data:
+      actionName: Lamp
+  condition: []
+  action:
+  - service: light.toggle
+    target:
+      entity_id: light.lamp
+  mode: single
+- id: '1634428290034'
+  alias: iOS Action - Stair Lights
+  description: ''
+  trigger:
+  - platform: event
+    event_type: ios.action_fired
+    event_data:
+      actionName: Stair Lights
+  condition: []
+  action:
+  - service: switch.toggle
+    target:
+      entity_id: switch.stair_lights
+  mode: single
+- id: '1634429002443'
+  alias: iOS Action - Close Garage Door
+  description: ''
+  trigger:
+  - platform: event
+    event_type: ''
+    id: ios.action_fired
+    event_data:
+      actionName: Close Garage Door
+  condition: []
+  action:
+  - service: cover.close_cover
+    target:
+      entity_id: cover.garage_door_msg100_main_channel
+  mode: single
+- id: '1634429045564'
+  alias: iOS Action - Open Garage Door
+  description: ''
+  trigger:
+  - platform: event
+    event_type: ''
+    id: ios.action_fired
+    event_data:
+      actionName: Open Garage Door
+  condition: []
+  action:
+  - service: cover.open_cover
+    target:
+      entity_id: cover.garage_door_msg100_main_channel
+  mode: single

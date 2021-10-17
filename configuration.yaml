@@ -172,6 +172,57 @@ octoprint:
   host: 192.168.0.11
   api_key: FCCFFF6337D04EFC8358643D0BB144C6
 
+ios:
+  actions:
+    - name: 'Open/Close Garage Door'
+      background_color: "#000000"
+      label:
+        text: "Open/Close Garage Door"
+        color: "#ffffff"
+      icon:
+        icon: garage-variant
+        color: "#ffffff"
+    - name: 'Turn On Kettle'
+      background_color: "#000000"
+      label:
+        text: "Turn On Kettle"
+        color: "#ffffff"
+      icon:
+        icon: kettle
+        color: "#ffffff"
+    - name: 'Lamp'
+      background_color: "#000000"
+      label:
+        text: "Lamp"
+        color: "#ffffff"
+      icon:
+        icon: lightbulb
+        color: "#ffffff"
+    - name: 'Stair Lights'
+      background_color: "#000000"
+      label:
+        text: "Stair Lights"
+        color: "#ffffff"
+      icon:
+        icon: lightbulb
+        color: "#ffffff"
+    - name: 'Close Garage Door'
+      background_color: "#000000"
+      label:
+        text: "Close Garage Door"
+        color: "#ffffff"
+      icon:
+        icon: garage-variant
+        color: "#ffffff"
+    - name: 'Open Garage Door'
+      background_color: "#000000"
+      label:
+        text: "Open Garage Door"
+        color: "#ffffff"
+      icon:
+        icon: garage-variant
+        color: "#ffffff"
+
 group: !include groups.yaml
 automation: !include automations.yaml
 script: !include scripts.yaml
