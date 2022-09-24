@@ -1,0 +1,712 @@
+title: ''
+views:
+  - theme: Backend-selected
+    path: home
+    icon: mdi:home-assistant
+    layout:
+      max_width: 700
+    type: custom:vertical-layout
+    badges: []
+    cards:
+      - type: custom:mushroom-title-card
+        title: Good {{states('sensor.time_of_day')}}, {{ user }}
+      - type: vertical-stack
+        cards:
+        - type: horizontal-stack
+          cards:
+            - type: custom:button-card
+              template:
+                - card_room
+                - blue_no_state_fixed
+              name: Living Room
+              entity: sensor.stairs_bottom_sensor_temperature_measurement
+              icon: mdi:sofa-single
+              tap_action:
+                !include popup/living_room_popup.yaml
+              variables:
+                label_use_temperature: true
+                label_use_brightness: false
+                entity_1:
+                  entity_id: light.lamp
+                  templates:
+                    - yellow_on
+                  tap_action:
+                    action: toggle
+                entity_2:
+                  entity_id: input_boolean.has_vacuumed
+                  templates:
+                    - blue_on
+                  tap_action:
+                    action: toggle
+                entity_3:
+                  entity_id: media_player.living_room_tv
+                  templates:
+                    - green_on
+                  tap_action:
+                    action: more-info
+            - type: custom:button-card
+              template:
+                - card_room
+                - green_no_state
+              name: Dan's Study
+              entity: light.study_light
+              icon: mdi:chair-rolling
+              tap_action:
+                !include popup/dan_study_popup.yaml
+              variables:
+                label_use_temperature: false
+                label_use_brightness: true
+                entity_1:
+                  entity_id: light.study_light
+                  templates:
+                    - yellow_on
+                  tap_action:
+                    action: toggle
+                entity_2:
+                  entity_id: media_player.study_tv
+                  templates:
+                    - green_on
+                  tap_action:
+                    action: call-service
+                    service: media_player.toggle
+                    service_data:
+                      entity_id: media_player.study_tv
+        - type: horizontal-stack
+          cards:
+            - type: custom:button-card
+              template:
+                - card_room
+                - yellow_no_state
+              name: Kitchen
+              icon: mdi:stove
+              tap_action:
+                !include popup/kitchen_popup.yaml
+              variables:
+                label_use_temperature: false
+                label_use_brightness: false
+                entity_1:
+                  entity_id: switch.kettlestart
+                  templates:
+                    - red_on
+                  tap_action:
+                    action: toggle
+            - type: custom:button-card
+              template:
+                - card_room
+                - red_no_state
+              name: Garage
+              icon: mdi:garage-variant
+              tap_action:
+                !include popup/garage_popup.yaml
+              variables:
+                label_use_temperature: false
+                label_use_brightness: false
+                entity_1:
+                  entity_id: cover.garage_door_msg100_main_channel
+                  templates:
+                    - red_on
+                  tap_action:
+                    action: toggle
+        - type: horizontal-stack
+          cards:
+          - type: custom:button-card
+            template:
+              - card_room
+              - blue_no_state_fixed
+            name: Bedroom
+            entity: light.bedside_lamp
+            icon: mdi:bed
+            tap_action:
+              !include popup/bedroom_popup.yaml
+            variables:
+              label_use_temperature: false
+              label_use_brightness: true
+              entity_1:
+                entity_id: light.bedside_lamp
+                templates:
+                  - yellow_on
+                tap_action:
+                  action: toggle
+          - type: vertical-stack
+            cards:
+            - type: "custom:button-card"
+              entity: lock.front_door
+              template: "custom_card_eraycetinay_lock"
+              name: "Front Door"
+              variables:
+                ulm_custom_card_eraycetinay_lock_tap_control: true
+                ulm_custom_card_eraycetinay_lock_battery_level: sensor.front_door_battery
+                ulm_custom_card_eraycetinay_lock_door_open: sensor.open_closed_sensor_battery
+              triggers_update:
+                - "sensor.front_door_battery"
+                - "sensor.open_closed_sensor_battery"
+            - type: custom:mushroom-entity-card
+              entity: group.lights
+              fill_container: true
+              hide_icon: false
+              icon: mdi:lamps
+              use_entity_picture: false
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: Weather
+          - type: custom:weather-card
+            entity: weather.home
+            number_of_forecasts: '5'
+            details: false
+        view_layout:
+          column: 2
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: Temperature
+            subtitle: ''
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - entity: sensor.stairs_top_sensor_temperature_measurement_2
+                    name: Upstairs
+                    color: var(--google-yellow)
+                align_state: left
+                font_size: 60
+                font_size_header: 11
+                hours_to_show: 48
+                line_width: 4
+                animate: true
+                points_per_hour: 0.5
+                lower_bound_secondary: 0
+                show:
+                  fill: fade
+                  graph: line
+                  extrema: true
+                  name: true
+                  icon: false
+  - theme: Backend-selected
+    path: people
+    icon: mdi:account
+    badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: 'custom:button-card'
+                template: card_person
+                entity: person.daniel
+                variables:
+                  ulm_card_person_entity: person.daniel
+                  ulm_card_person_use_entity_picture: true
+              - type: 'custom:button-card'
+                template: card_person
+                entity: person.gen
+                variables:
+                  ulm_card_person_entity: person.gen
+                  ulm_card_person_use_entity_picture: true
+          - type: map
+            entities:
+              - entity: person.daniel
+              - entity: person.gen
+            dark_mode: true
+  - theme: Backend-selected
+    title: Media
+    path: media
+    icon: mdi:television
+    layout:
+      max_width: 800
+    type: custom:vertical-layout
+    badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: Recently Added
+          - type: horizontal-stack
+            cards:
+              - type: vertical-stack
+                cards:
+                  - type: custom:mushroom-title-card
+                    title: Movie
+                  - type: custom:button-card
+                    entity: sensor.recently_added_movies
+                    show_name: false
+                    tap_action:
+                      action: url
+                      url_path: https://plex.dp-server.duckdns.org/web/index.html#!/
+                    template:
+                      - conditional_media
+                      - icon_plex
+              - type: vertical-stack
+                cards:
+                  - type: custom:mushroom-title-card
+                    title: TV
+                  - type: custom:button-card
+                    entity: sensor.recently_added_tv
+                    show_name: false
+                    tap_action:
+                      action: url
+                      url_path: https://plex.dp-server.duckdns.org/web/index.html#!/
+                    template:
+                      - conditional_media
+                      - icon_plex
+        view_layout:
+          grid-area: main1
+      - type: media-control
+        view_layout:
+          grid-area: main2
+        entity: media_player.living_room_tv
+      - type: custom:mini-graph-card
+        view_layout:
+          column: 2
+        animate: true
+        decimals: 0
+        entities:
+          - entity: sensor.tautulli
+            name: Plex History
+        hour24: false
+        hours_to_show: 24
+        icon: mdi:plex
+        line_color: '#e5a00d'
+        line_width: 3
+        name: Plex History
+        points: false
+        points_per_hour: 10
+        show:
+          fill: fade
+          icon_adaptive_color: true
+        tap_action:
+          action: more-info
+          entity: sensor.tautulli
+      - type: conditional
+        conditions:
+          - entity: sensor.qbittorrent_status
+            state_not: idle
+        card:
+          type: entities
+          entities:
+            - entity: sensor.qbittorrent_down_speed
+            - entity: sensor.qbittorrent_up_speed
+          title: Currently Downloading...
+      - type: button
+        tap_action:
+          action: url
+          url_path: https://ombi.dp-server.duckdns.org/discover
+        name: Download New Movies/TV
+        icon: hass:download
+        icon_height: 42px
+        view_layout:
+          grid-area: main5
+  - theme: Backend-selected
+    path: energy
+    layout: {}
+    icon: mdi:lightning-bolt
+    badges: []
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: Weekly Energy
+          - type: horizontal-stack
+            cards:
+              - type: vertical-stack
+                cards:
+                  - type: custom:mushroom-title-card
+                    title: Consumption
+                  - type: custom:mini-graph-card
+                    entities:
+                      - entity: sensor.energyeasy_yesterday_consumption
+                        name: ENERGY CONSUMPTION
+                    show:
+                      graph: bar
+                      name: false
+                      icon: false
+                    name: ENERGY CONSUMPTION
+                    hours_to_show: 168
+                    aggregate_func: max
+                    group_by: date
+                    lower_bound: 5
+                    upper_bound: 20
+                    line_color: var(--google-yellow)
+              - type: vertical-stack
+                cards:
+                  - type: custom:mushroom-title-card
+                    title: Cost
+                  - type: custom:mini-graph-card
+                    entities:
+                      - entity: sensor.energyeasy_yesterday_cost_total
+                        name: ENERGY CONSUMPTION
+                    show:
+                      graph: bar
+                      name: false
+                      icon: false
+                    name: ENERGY CONSUMPTION
+                    hours_to_show: 168
+                    aggregate_func: max
+                    group_by: date
+                    lower_bound: 0.5
+                    upper_bound: 5
+                    line_color: var(--google-yellow)
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: Batteries
+          - type: custom:auto-entities
+            card:
+              type: entities
+            filter:
+              include:
+                - entity_id: sensor.*battery
+                  options:
+                    type: custom:battery-entity-row
+            sort:
+              method: state
+  - theme: Backend-selected
+    path: system
+    visible:
+      - user: d96d99b765cb4775a8dad0ee43f64ea3
+    icon: mdi:server-network
+    type: custom:vertical-layout
+    layout:
+      max_width: 800
+    badges: []
+    cards:
+      - type: conditional
+        conditions:
+          - entity: sensor.hacs
+            state_not: '0'
+        card:
+          type: vertical-stack
+          cards:
+            - type: custom:mushroom-title-card
+              title: HACS / Home Assistant Community Store
+            - type: entities
+              entities:
+                - entity: sensor.hacs
+                  name: HACS
+                  secondary_info: none
+              show_header_toggle: false
+              state_color: false
+              card_mod:
+                style: |
+                  ha-card {
+                    --card-mod-icon-color: var(--warning-color);
+                    color: var(--warning-color);
+                  }
+      - type: vertical-stack
+        cards:
+          - type: conditional
+            conditions:
+              - entity: sensor.version_check
+                state: 'False'
+            card:
+              type: vertical-stack
+              cards:
+                - type: custom:mushroom-title-card
+                  title: Home Assistant Update {{ states('sensor.docker_hub') }}
+                - type: entities
+                  entities:
+                    - entity: sensor.current_version
+                    - entity: sensor.docker_hub
+                  card_mod:
+                    style: |
+                      ha-card {
+                        --card-mod-icon-color: orange;
+                        color: orange;
+                      }
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: Server
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.processor_use
+                name: CPU
+                align_state: center
+                font_size: 60
+                font_size_header: 11
+                hours_to_show: 12
+                line_color: var(--google-red)
+                line_width: 4
+                animate: true
+                points_per_hour: 4
+                lower_bound: 0
+                lower_bound_secondary: 0
+                show:
+                  fill: fade
+                  graph: line
+                  extrema: false
+                  icon: true
+                  name: true
+                  labels: false
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.processor_temperature
+                name: Temperature
+                align_state: center
+                font_size: 60
+                font_size_header: 11
+                hours_to_show: 12
+                line_color: var(--google-green)
+                line_width: 4
+                animate: true
+                points_per_hour: 4
+                lower_bound: 0
+                lower_bound_secondary: 0
+                show:
+                  fill: fade
+                  graph: line
+                  extrema: false
+                  icon: true
+                  name: true
+                  labels: false
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.disk_use_percent_shared
+                name: Disk Usage
+                align_state: center
+                font_size: 60
+                font_size_header: 11
+                hours_to_show: 12
+                line_color: var(--google-blue)
+                line_width: 4
+                animate: true
+                points_per_hour: 4
+                lower_bound: 0
+                lower_bound_secondary: 0
+                show:
+                  fill: fade
+                  graph: line
+                  extrema: false
+                  icon: true
+                  name: true
+                  labels: false
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.memory_use_percent
+                name: RAM
+                align_state: center
+                font_size: 60
+                font_size_header: 11
+                hours_to_show: 12
+                line_color: var(--google-yellow)
+                line_width: 4
+                animate: true
+                points_per_hour: 4
+                lower_bound: 0
+                lower_bound_secondary: 0
+                show:
+                  fill: fade
+                  graph: line
+                  extrema: false
+                  icon: true
+                  name: true
+                  labels: false
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: Docker
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.docker_1cpu
+                name: CPU
+                align_state: center
+                font_size: 60
+                font_size_header: 11
+                hours_to_show: 12
+                line_color: var(--google-red)
+                line_width: 4
+                animate: true
+                points_per_hour: 4
+                lower_bound: 0
+                lower_bound_secondary: 0
+                show:
+                  fill: fade
+                  graph: line
+                  extrema: false
+                  icon: true
+                  name: true
+                  labels: false
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.docker_memory_percent
+                name: RAM
+                align_state: center
+                font_size: 60
+                font_size_header: 11
+                hours_to_show: 12
+                line_color: var(--google-yellow)
+                line_width: 4
+                animate: true
+                points_per_hour: 4
+                lower_bound: 0
+                lower_bound_secondary: 0
+                show:
+                  fill: fade
+                  graph: line
+                  extrema: false
+                  icon: true
+                  name: true
+                  labels: false
+          - type: entities
+            entities:
+              - sensor.docker_memory
+              - sensor.docker_containers_total
+              - sensor.docker_containers_running
+              - sensor.docker_containers_paused
+              - sensor.docker_containers_stopped
+              - sensor.docker_images
+              - sensor.docker_version
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: SERVICE - Home Assistant
+          - type: horizontal-stack
+            cards:
+              - type: custom:button-card
+                entity: sensor.time
+                icon: mdi:restart
+                name: Lovelace Restart
+                tap_action:
+                  service: browser_mod.javascript
+                  data:
+                    code: lovelace_reload()
+                hold_action:
+                  action: none
+                card_mod:
+                  style: |
+                    ha-card {
+                      --card-mod-icon-color: var(--google-green);
+                      color: var(--google-green);
+                    }
+              - type: custom:button-card
+                entity: sensor.time
+                icon: mdi:restart
+                name: Theme Restart
+                tap_action:
+                  action: call-service
+                  service: frontend.reload_themes
+                hold_action:
+                  action: none
+                card_mod:
+                  style: |
+                    ha-card {
+                      --card-mod-icon-color: var(--google-green);
+                      color: var(--google-green);
+                    }
+              - type: custom:button-card
+                entity: sensor.time
+                icon: mdi:restart
+                name: HA Restart
+                tap_action:
+                  action: none
+                hold_action:
+                  action: call-service
+                  service: homeassistant.restart
+                card_mod:
+                  style: |
+                    ha-card {
+                      --card-mod-icon-color: var(--warning-color);
+                      color: var(--warning-color);
+                    }
+            card_mod:
+              style:
+                card:
+                  - color: var(--google-green)
+        view_layout:
+          column: 2
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: Network
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.speedtest_download
+                name: Download
+                align_icon: left
+                align_state: center
+                font_size: 60
+                font_size_header: 11
+                hours_to_show: 12
+                line_color: var(--google-red)
+                line_width: 4
+                animate: true
+                points_per_hour: 4
+                lower_bound: 0
+                lower_bound_secondary: 0
+                show:
+                  fill: fade
+                  graph: line
+                  extrema: true
+                  icon: true
+                  name: true
+                  labels: false
+              - type: custom:mini-graph-card
+                entities:
+                  - sensor.speedtest_upload
+                name: Upload
+                align_icon: left
+                align_state: center
+                font_size: 60
+                font_size_header: 11
+                hours_to_show: 12
+                line_color: var(--google-blue)
+                line_width: 4
+                animate: true
+                points_per_hour: 4
+                lower_bound: 0
+                lower_bound_secondary: 0
+                show:
+                  fill: fade
+                  graph: line
+                  extrema: true
+                  icon: true
+                  name: true
+                  labels: false
+      - type: vertical-stack
+        cards:
+          - type: custom:mushroom-title-card
+            title: Logbook
+          - type: custom:stack-in-card
+            cards:
+              - type: logbook
+                entities:
+                  - vacuum.clean_elizabeth
+                  - lock.front_door
+                  - cover.garage_door_msg100_main_channel
+                  - alarm_control_panel.home_alarm
+                  - light.lamp
+                  - light.bedside_lamp
+                  - light.study_light
+                hours_to_show: 24
+  - theme: Backend-selected
+    icon: mdi:speaker
+    path: music
+    badges: []
+    cards:
+      - type: custom:spotify-card
+        limit: 10
+        always_play_random_song: true
+        known_connect_devices: []
+        hide_top_header: true
+        hide_warning: true
+  - theme: Backend-selected
+    path: security
+    icon: mdi:shield-home
+    badges: []
+    cards:
+      - type: custom:mushroom-alarm-control-panel-card
+        entity: alarm_control_panel.home_alarm
+        states:
+          - armed_home
+          - armed_away
+        fill_container: false
+        show_keypad: true
+button_card_templates: !include_dir_merge_named "custom_components/ui_lovelace_minimalist/__ui_minimalist__/ulm_templates/"

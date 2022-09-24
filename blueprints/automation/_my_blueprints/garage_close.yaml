@@ -1,0 +1,39 @@
+blueprint:
+  name: Garage Close After Coming Home
+  description: Close the garage when we come home after driving out
+  domain: automation
+  input:
+    tracker_entity:
+      name: The persons tracker
+      selector:
+        entity:
+          domain: device_tracker
+    to_close_garage:
+      name: To close the garage
+      selector:
+        entity:
+          domain: input_boolean
+
+trigger:
+  platform: state
+  entity_id: !input 'tracker_entity'
+  from: 'not_home'
+  to: 'home'
+  for:
+    hours: 0
+    minutes: 5
+    seconds: 0
+    milliseconds: 0
+
+condition:
+  condition: state
+  entity_id: !input 'to_close_garage'
+  state: 'on'
+
+action:
+  - service: cover.close_cover
+    target:
+      entity_id: cover.garage_door_msg100_main_channel
+  - service: input_boolean.turn_off
+    target:
+      entity_id: !input 'to_close_garage'

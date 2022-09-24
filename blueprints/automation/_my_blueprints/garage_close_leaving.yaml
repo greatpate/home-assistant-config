@@ -1,0 +1,52 @@
+blueprint:
+  name: Garage Close When Leaving
+  description: Close the garage when the person leaves
+  domain: automation
+  input:
+    tracker_entity:
+      name: The persons tracker
+      selector:
+        entity:
+          domain: device_tracker
+    to_close_garage:
+      name: To close the garage
+      selector:
+        entity:
+          domain: input_boolean
+    to_open_garage:
+      name: To open the garage
+      selector:
+        entity:
+          domain: input_boolean
+    close_delay:
+      name: Delay before telling the garage door to close
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 3600
+          unit_of_measurement: seconds
+
+trigger:
+  platform: state
+  entity_id: !input 'tracker_entity'
+  from: 'home'
+  to: 'not_home'
+
+condition:
+  condition: state
+  entity_id: cover.garage_door_msg100_main_channel
+  state: 'open'
+  
+action:
+  - alias: "Wait the number of seconds that has been set"
+    delay: !input close_delay
+  - service: cover.close_cover
+    target:
+      entity_id: cover.garage_door_msg100_main_channel
+  - service: input_boolean.turn_on
+    target:
+      entity_id: !input 'to_open_garage'
+  - service: input_boolean.turn_on
+    target:
+      entity_id: !input 'to_close_garage'

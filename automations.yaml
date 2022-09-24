@@ -3,12 +3,12 @@
   description: ''
   trigger:
   - platform: time
-    at: '22:00'
+    at: '22:00:00'
   condition:
   - condition: device
     device_id: 3aab1d30e966e105dcc2aac570130db2
     domain: device_tracker
-    entity_id: device_tracker.pixel_2_xl
+    entity_id: device_tracker.dan_s_pixel
     type: is_home
   action:
   - type: turn_on
@@ -22,13 +22,13 @@
   description: ''
   trigger:
   - platform: time
-    at: '23:30'
+    at: '23:30:00'
   condition:
-  - condition: device
+  - type: is_plugged_in
+    condition: device
     device_id: 3aab1d30e966e105dcc2aac570130db2
-    domain: device_tracker
-    entity_id: device_tracker.pixel_2_xl
-    type: is_home
+    entity_id: binary_sensor.pixel_2_xl_is_charging
+    domain: binary_sensor
   action:
   - type: turn_off
     device_id: d6ab278726d16633fbc8c809c4d53cb1
@@ -42,7 +42,7 @@
   - platform: device
     device_id: 3aab1d30e966e105dcc2aac570130db2
     domain: device_tracker
-    entity_id: device_tracker.pixel_2_xl
+    entity_id: device_tracker.dan_s_pixel
     type: enters
     zone: zone.home
   - platform: device
@@ -58,6 +58,11 @@
     entity_id: sensor.stairs_bottom_sensor_illuminance
     domain: sensor
     below: 25
+  - condition: device
+    device_id: a6f90cd791f9b6d12eb8627adcd89700
+    domain: media_player
+    entity_id: media_player.living_room_tv
+    type: is_off
   action:
   - type: turn_on
     device_id: f3d83e7ab73e4b63894767b34bbafad0
@@ -145,7 +150,7 @@
     brightness_pct: 60
   mode: single
 - id: '1631443531116'
-  alias: Low battery level detection & notification for all battery sensors
+  alias: Notify - Low Battery
   description: ''
   use_blueprint:
     path: sbyx/low-battery-level-detection-notification-for-all-battery-sensors.yaml
@@ -153,7 +158,7 @@
       exclude:
         entity_id:
         - sensor.genn_s_iphone_battery_level
-        - sensor.pixel_2_xl_battery_level
+        - sensor.dan_s_pixel_battery_level
       actions:
       - device_id: 3aab1d30e966e105dcc2aac570130db2
         domain: mobile_app
@@ -198,11 +203,23 @@
       milliseconds: 0
   condition: []
   action:
-  - device_id: 3aab1d30e966e105dcc2aac570130db2
-    domain: mobile_app
-    type: notify
-    title: Garage Door
-    message: Garage door is still open
+  - service: notify.mobile_app_dan_s_pixel
+    data:
+      title: Garage Door
+      message: Garage door is still open
+      data:
+        actions:
+        - action: CLOSE_GARAGE
+          title: Close Garage
+  - wait_for_trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: CLOSE_GARAGE
+    continue_on_timeout: false
+  - service: cover.close_cover
+    target:
+      entity_id: cover.garage_door_msg100_main_channel
   mode: single
 - id: '1632475209402'
   alias: Notify when washing finished
@@ -216,8 +233,10 @@
       hours: 0
       minutes: 0
       seconds: 3
-      milliseconds: 0
-  condition: []
+  condition:
+  - condition: state
+    entity_id: person.daniel
+    state: home
   action:
   - device_id: 3aab1d30e966e105dcc2aac570130db2
     domain: mobile_app
@@ -254,45 +273,6 @@
   - service: rest_command.reload_meross
     data: {}
   id: ce57af7f68e44b2291cd7b5b06e9988f
-- id: '1633076889417'
-  alias: Open garage when Gen comes home
-  description: ''
-  trigger:
-  - platform: device
-    device_id: 27da62488a267030d15c0ec3136d1867
-    domain: device_tracker
-    entity_id: device_tracker.genn_s_iphone
-    type: enters
-    zone: zone.home
-  condition: []
-  action:
-  - device_id: b69d0132afd9b9e8479bab3500838eb2
-    domain: cover
-    entity_id: cover.garage_door_msg100_main_channel
-    type: open
-  mode: single
-- id: '1633076933633'
-  alias: Close garage door when Gen leaves
-  description: ''
-  trigger:
-  - platform: device
-    device_id: 27da62488a267030d15c0ec3136d1867
-    domain: device_tracker
-    entity_id: device_tracker.genn_s_iphone
-    type: leaves
-    zone: zone.home
-  condition:
-  - condition: device
-    device_id: b69d0132afd9b9e8479bab3500838eb2
-    domain: cover
-    entity_id: cover.garage_door_msg100_main_channel
-    type: is_open
-  action:
-  - device_id: b69d0132afd9b9e8479bab3500838eb2
-    domain: cover
-    entity_id: cover.garage_door_msg100_main_channel
-    type: close
-  mode: single
 - id: '1634427360127'
   alias: iOS Action - Close Garage Door
   description: ''
@@ -350,17 +330,17 @@
       entity_id: switch.stair_lights
   mode: single
 - id: '1634429002443'
-  alias: iOS Action - Close Garage Door
+  alias: iOS Action - Open/Close Garage Door
   description: ''
   trigger:
   - platform: event
     event_type: ''
     id: ios.action_fired
     event_data:
-      actionName: Close Garage Door
+      actionName: Open/Close Garage Door
   condition: []
   action:
-  - service: cover.close_cover
+  - service: cover.toggle
     target:
       entity_id: cover.garage_door_msg100_main_channel
   mode: single
@@ -376,6 +356,472 @@
   condition: []
   action:
   - service: cover.open_cover
+    data: {}
     target:
       entity_id: cover.garage_door_msg100_main_channel
+  mode: single
+- id: '1635835725640'
+  alias: Door unlock when we get home
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 27da62488a267030d15c0ec3136d1867
+    domain: device_tracker
+    entity_id: device_tracker.genn_s_iphone
+    type: enters
+    zone: zone.home
+  - platform: device
+    device_id: 3aab1d30e966e105dcc2aac570130db2
+    domain: device_tracker
+    entity_id: device_tracker.pixel_2_xl
+    type: enters
+    zone: zone.home
+  condition: []
+  action:
+  - device_id: c8f3511382583627542141f0fe5bb225
+    domain: lock
+    entity_id: lock.front_door
+    type: unlock
+  mode: single
+- id: '1635835849125'
+  alias: Alarm - Arm when we leave
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: group.everyone
+    to: not_home
+  condition: []
+  action:
+  - device_id: c8f3511382583627542141f0fe5bb225
+    domain: lock
+    entity_id: lock.front_door
+    type: lock
+  - service: alarm_control_panel.alarm_arm_away
+    data: {}
+    target:
+      entity_id: alarm_control_panel.home_alarm
+  mode: single
+- id: '1636007691581'
+  alias: Close garage after coming home - Gen
+  description: ''
+  trigger:
+  - type: not_opened
+    platform: device
+    device_id: 4b8a8cd09eb96807f74b86de3c59b0fd
+    entity_id: binary_sensor.open_closed_sensor_contact
+    domain: binary_sensor
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  condition:
+  - condition: state
+    entity_id: input_boolean.to_close_garage_gen
+    state: 'on'
+  action:
+  - device_id: b69d0132afd9b9e8479bab3500838eb2
+    domain: cover
+    entity_id: cover.garage_door_msg100_main_channel
+    type: close
+  - service: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.to_close_garage_gen
+  mode: single
+- id: '1637321678041'
+  alias: Close garage door when home for a bit
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: device_tracker.genn_s_iphone
+    to: home
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  - platform: state
+    entity_id: device_tracker.pixel_2_xl
+    to: home
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+      milliseconds: 0
+  condition:
+  - type: is_not_open
+    condition: device
+    device_id: 4b8a8cd09eb96807f74b86de3c59b0fd
+    entity_id: binary_sensor.open_closed_sensor_contact
+    domain: binary_sensor
+  action:
+  - device_id: b69d0132afd9b9e8479bab3500838eb2
+    domain: cover
+    entity_id: cover.garage_door_msg100_main_channel
+    type: close
+  mode: single
+- id: '1637837536832'
+  alias: Vacuum when not home
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: group.everyone
+    to: not_home
+  condition:
+  - condition: state
+    entity_id: input_boolean.has_vacuumed
+    state: 'off'
+  action:
+  - service: vacuum.start
+    target:
+      entity_id: vacuum.clean_elizabeth
+  mode: single
+- id: '1637837866565'
+  alias: Turn on has_vacuumed
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: vacuum.clean_elizabeth
+    to: cleaning
+    for:
+      hours: 0
+      minutes: 1
+      seconds: 0
+      milliseconds: 0
+  condition: []
+  action:
+  - service: input_boolean.turn_on
+    target:
+      entity_id: input_boolean.has_vacuumed
+  mode: single
+- id: '1637837926699'
+  alias: Turn off has_vacuumed
+  description: ''
+  trigger:
+  - platform: time
+    at: 00:00:00
+  condition: []
+  action:
+  - service: input_boolean.turn_off
+    target:
+      entity_id: input_boolean.has_vacuumed
+  mode: single
+- id: '1637919897939'
+  alias: Notify - Green Waste
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.green_waste
+    to: '0'
+    for:
+      hours: 15
+      minutes: 0
+      seconds: 0
+  condition: []
+  action:
+  - device_id: 3aab1d30e966e105dcc2aac570130db2
+    domain: mobile_app
+    type: notify
+    message: Green Waste
+    title: Bins
+  mode: single
+- id: '1637919947390'
+  alias: Notify - Recycling
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: sensor.recycling
+    to: '0'
+    for:
+      hours: 15
+      minutes: 0
+      seconds: 0
+  condition: []
+  action:
+  - device_id: 3aab1d30e966e105dcc2aac570130db2
+    domain: mobile_app
+    type: notify
+    message: Recycling
+    title: Bins
+  mode: single
+- id: '1637967669288'
+  alias: Unlock door when we get home
+  description: ''
+  trigger:
+  - platform: device
+    device_id: 27da62488a267030d15c0ec3136d1867
+    domain: device_tracker
+    entity_id: device_tracker.genn_s_iphone
+    type: enters
+    zone: zone.home
+  - platform: device
+    device_id: 3aab1d30e966e105dcc2aac570130db2
+    domain: device_tracker
+    entity_id: device_tracker.dan_s_pixel
+    type: enters
+    zone: zone.home
+  condition: []
+  action:
+  - device_id: c8f3511382583627542141f0fe5bb225
+    domain: lock
+    entity_id: lock.front_door
+    type: unlock
+  mode: single
+- id: '1638148237002'
+  alias: Close garage door when door is locked
+  description: ''
+  trigger:
+  - platform: device
+    device_id: c8f3511382583627542141f0fe5bb225
+    domain: lock
+    entity_id: lock.front_door
+    type: locked
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  condition: []
+  action:
+  - device_id: b69d0132afd9b9e8479bab3500838eb2
+    domain: cover
+    entity_id: cover.garage_door_msg100_main_channel
+    type: close
+  mode: single
+- id: '1639189904798'
+  alias: Notify when door is left unlocked
+  description: ''
+  trigger:
+  - platform: state
+    entity_id: group.everyone
+    to: not_home
+    for:
+      hours: 0
+      minutes: 5
+      seconds: 0
+  condition:
+  - condition: device
+    device_id: c8f3511382583627542141f0fe5bb225
+    domain: lock
+    entity_id: lock.front_door
+    type: is_unlocked
+  action:
+  - service: notify.mobile_app_dan_s_pixel
+    data:
+      title: Door Open
+      message: Front door is still unlocked
+      data:
+        actions:
+        - action: LOCK_DOOR
+          title: Lock Door
+  - wait_for_trigger:
+    - platform: event
+      event_type: mobile_app_notification_action
+      event_data:
+        action: LOCK_DOOR
+    continue_on_timeout: true
+  - service: lock.lock
+    target:
+      entity_id: lock.front_door
+    data: {}
+  mode: single
+- id: '1641602277126'
+  alias: Vacuum Daily
+  description: ''
+  trigger:
+  - platform: time
+    at: '11:00:00'
+  condition:
+  - condition: state
+    entity_id: input_boolean.has_vacuumed
+    state: 'off'
+  action:
+  - service: vacuum.start
+    target:
+      entity_id: vacuum.clean_elizabeth
+    data: {}
+  - service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.has_vacuumed
+  mode: single
+- id: '1644024032819'
+  alias: Garage Close After Coming Home - Dan
+  description: ''
+  use_blueprint:
+    path: _my_blueprints/garage_close.yaml
+    input:
+      tracker_entity: device_tracker.dan_s_pixel
+      to_close_garage: input_boolean.to_close_garage_dan
+- id: '1644024060759'
+  alias: Garage Close After Coming Home - Gen
+  description: ''
+  use_blueprint:
+    path: _my_blueprints/garage_close.yaml
+    input:
+      tracker_entity: device_tracker.genn_s_iphone
+      to_close_garage: input_boolean.to_close_garage_gen
+- id: '1644024092134'
+  alias: Garage Close When Leaving - Dan
+  description: ''
+  use_blueprint:
+    path: _my_blueprints/garage_close_leaving.yaml
+    input:
+      tracker_entity: device_tracker.dan_s_pixel
+      to_close_garage: input_boolean.to_close_garage_dan
+      to_open_garage: input_boolean.to_open_garage_dan
+      close_delay: 120
+- id: '1644024111659'
+  alias: Garage Close When Leaving - Gen
+  description: ''
+  use_blueprint:
+    path: _my_blueprints/garage_close_leaving.yaml
+    input:
+      tracker_entity: device_tracker.genn_s_iphone
+      to_close_garage: input_boolean.to_close_garage_gen
+      to_open_garage: input_boolean.to_open_garage_gen
+- id: '1644024128914'
+  alias: Garage Open When Coming Home - Dan
+  description: ''
+  use_blueprint:
+    path: _my_blueprints/garage_open.yaml
+    input:
+      tracker_entity: device_tracker.dan_s_pixel
+      to_open_garage: input_boolean.to_open_garage_dan
+- id: '1644024146593'
+  alias: Garage Open When Coming Home - Gen
+  description: ''
+  use_blueprint:
+    path: _my_blueprints/garage_open.yaml
+    input:
+      tracker_entity: device_tracker.genn_s_iphone
+      to_open_garage: input_boolean.to_open_garage_gen
+- id: '1644024310432'
+  alias: LG webOS Smart TV - Turn On
+  description: ''
+  use_blueprint:
+    path: cvroque/webostv_turn_on.yaml
+    input:
+      webostv: media_player.living_room_tv
+      webostv_broadcast_address: 192.168.0.25
+      webostv_mac: B4-B2-91-CB-39-D7
+- id: '1644028314727'
+  alias: Update energy rate
+  description: ''
+  trigger:
+  - platform: time_pattern
+    minutes: '30'
+  condition: []
+  action:
+  - service: input_number.set_value
+    data_template:
+      entity_id: input_number.energy_rate_cost
+      value: '{{ states(''sensor.energyeasy_single_rate_cost'') }}'
+  mode: single
+- id: '1645955478647'
+  alias: Lock front door at night
+  description: ''
+  trigger:
+  - platform: time
+    at: '21:00:00'
+  condition:
+  - condition: state
+    entity_id: group.everyone
+    state: home
+  action:
+  - device_id: c8f3511382583627542141f0fe5bb225
+    domain: lock
+    entity_id: lock.front_door
+    type: lock
+  mode: single
+- id: '1657957221865'
+  alias: Turn on TV
+  description: ''
+  trigger:
+  - platform: device
+    device_id: a6f90cd791f9b6d12eb8627adcd89700
+    domain: webostv
+    type: webostv.turn_on
+  condition: []
+  action:
+  - service: wake_on_lan.send_magic_packet
+    data:
+      mac: B4:B2:91:CB:39:D7
+  mode: single
+- id: '1657968320279'
+  alias: Alarm - Trigger alarm while armed away
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - binary_sensor.open_closed_sensor_contact
+    to: 'on'
+  - platform: state
+    entity_id:
+    - cover.garage_door_msg100_main_channel
+    to: open
+  condition:
+  - condition: state
+    entity_id: alarm_control_panel.home_alarm
+    state: armed_away
+  action:
+  - service: alarm_control_panel.alarm_trigger
+    data: {}
+    target:
+      entity_id: alarm_control_panel.home_alarm
+  mode: single
+- id: '1657968425762'
+  alias: Alarm - Send notification when alarm triggered
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - alarm_control_panel.home_alarm
+    to: triggered
+  condition: []
+  action:
+  - device_id: 3aab1d30e966e105dcc2aac570130db2
+    domain: mobile_app
+    type: notify
+    message: The alarm has been triggered
+    title: Alarm
+  - repeat:
+      while:
+      - condition: state
+        entity_id: alarm_control_panel.home_alarm
+        state: triggered
+      sequence:
+      - service: tts.google_translate_say
+        data:
+          entity_id: media_player.home_hub
+          message: ALARM
+      - service: light.toggle
+        data:
+          flash: short
+        target:
+          entity_id: light.lamp
+      - delay:
+          hours: 0
+          minutes: 0
+          seconds: 1
+          milliseconds: 0
+  - service: light.turn_off
+    data: {}
+    target:
+      entity_id: light.lamp
+  mode: single
+- id: '1657968612638'
+  alias: Alarm - Disarm alarm when door unlocked by keypad
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - lock.front_door
+    attribute: lock_state
+    to: unlocked
+  condition: []
+  action:
+  - service: alarm_control_panel.alarm_disarm
+    data: {}
+    target:
+      entity_id: alarm_control_panel.home_alarm
   mode: single

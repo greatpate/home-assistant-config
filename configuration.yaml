@@ -11,28 +11,9 @@ tts:
 
 discovery:
 
-lifx:
-  light:
-    - port: 56700
-    - broadcast: 192.168.0.101
-    - broadcast: 192.168.0.102
-    - broadcast: 192.168.0.103
-
-# device_tracker:
-  # - platform: netgear
-    # host: 192.168.0.1
-    # port: 80
-    # username: admin
-    # password: P@t31234
-    # interval_seconds: 10
-    # consider_home: 180
-    # new_device_defaults:
-    # track_new_devices: true
-
 http:
   ssl_certificate: /dehydrated/certs/greatpate.duckdns.org/fullchain.pem
   ssl_key: /dehydrated/certs/greatpate.duckdns.org/privkey.pem
-  # base_url: greatpate.duckdns.org:8123
 
 duckdns: 
   domain: greatpate
@@ -53,19 +34,82 @@ google_assistant:
 
 wake_on_lan: # enables `wake_on_lan` integration
 
-webostv:
-  host: 192.168.0.13
-  name: Living Room TV
-  #other settings
-  turn_on_action:
-    service: wake_on_lan.send_magic_packet
-    data:
-      mac: 24-E8-53-D7-4D-E2
-      broadcast_address: 192.168.0.13
-
 media_player:
 
 notify:
+
+lovelace:
+  mode: yaml
+  resources:
+    - url: /local/vertical-stack-in-card.js?v=0.4.1
+      type: module
+    - url: /local/mini-graph-card-bundle.js?v=0.10.0
+      type: module
+    - url: /local/mini-media-player-bundle.js?v=1.13.0
+      type: module
+    - url: /local/custom-lovelace/weather-card/weather-card.js
+      type: module
+    - url: /hacsfiles/google_home_timers_card/googletimers-card.js
+      type: module
+    - url: /hacsfiles/vacuum-card/vacuum-card.js?hacstag=261291295263
+      type: module
+    - url: /hacsfiles/channel-pad/card-channel-pad.js
+      type: module
+    - url: /browser_mod.js
+      type: module
+    - url: /hacsfiles/LG-WebOS-Remote-Control/lg-remote-control.js?hacstag=25700599091298
+      type: module
+    - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js?hacstag=1512800620110
+      type: module
+    - url: /hacsfiles/mini-media-player/mini-media-player-bundle.js?hacstag=1485208381164
+      type: module
+    - url: /hacsfiles/button-card/button-card.js?hacstag=146194325342
+      type: module
+    - url: /hacsfiles/lovelace-layout-card/layout-card.js?hacstag=156434866242
+      type: module
+    - url: /hacsfiles/banner-card/banner-card.js?hacstag=1867657040130
+      type: module
+    - url: /hacsfiles/weather-card/weather-card.js?hacstag=192732636150
+      type: module
+    - url: /hacsfiles/spotify-card/spotify-card.js?hacstag=173955605240
+      type: module
+    - url: /hacsfiles/lovelace-xiaomi-vacuum-card/xiaomi-vacuum-card.js?hacstag=180229356450
+      type: module
+    - url: /hacsfiles/upcoming-media-card/upcoming-media-card.js?hacstag=146783593043
+      type: module
+    - url: /hacsfiles/lovelace-mushroom/mushroom.js?hacstag=444350375213
+      type: module
+    - url: /hacsfiles/PlexMeetsHomeAssistant/plex-meets-homeassistant.js?hacstag=363428919363
+      type: module
+    - url: /hacsfiles/swipe-card/swipe-card.js?hacstag=192732887400
+      type: module
+    - url: /hacsfiles/lovelace-card-mod/card-mod.js?hacstag=190927524315
+      type: module
+    - url: /hacsfiles/lovelace-battery-entity-row/battery-entity-row.js?hacstag=303857065131
+      type: module
+    - url: /hacsfiles/lovelace-auto-entities/auto-entities.js?hacstag=1677445841110
+      type: module
+    - url: /hacsfiles/apexcharts-card/apexcharts-card.js?hacstag=331701152201
+      type: module
+    - url: /hacsfiles/custom-ui/custom-ui.js?hacstag=267558148202204191
+      type: module
+    - url: /hacsfiles/stack-in-card/stack-in-card.js?hacstag=248954055020
+      type: module
+    - url: /hacsfiles/my-cards/my-cards.js?hacstag=399108901101
+      type: module
+    - url: /hacsfiles/light-entity-card/light-entity-card.js
+      type: module
+    - url: /hacsfiles/simple-weather-card/simple-weather-card-bundle.js
+      type: module
+    - url: /hacsfiles/lovelace-state-switch/state-switch.js
+      type: module
+    - url: /hacsfiles/weather-radar-card/weather-radar-card.js
+      type: module
+
+frontend:
+  themes: !include_dir_merge_named themes
+  extra_module_url:
+    - /hacsfiles/lovelace-card-mod/card-mod.js
 
 sensor:
   - platform: energyeasy
@@ -136,10 +180,177 @@ sensor:
       - last_month_usage
       - last_month_consumption
       - last_month_generation
+  - platform: powercalc
+    entity_id: light.bedside_lamp
+    linear:
+      min_power: 1.5
+      max_power: 11
+    standby_power: 1
+  - platform: powercalc
+    entity_id: light.lamp
+    linear:
+      min_power: 1.5
+      max_power: 11
+    standby_power: 1
+  - platform: powercalc
+    entity_id: switch.stair_lights
+    fixed:
+      power: 11
+  - platform: powercalc
+    entity_id: light.study_light
+    linear:
+      min_power: 1.5
+      max_power: 11
+    standby_power: 1
+  - platform: powercalc
+    entity_id: media_player.living_room_tv
+    fixed:
+      power: 130
+  - platform: powercalc
+    entity_id: media_player.samsung
+    fixed:
+      power: 110
+  - platform: powercalc
+    entity_id: switch.kettlestart
+    fixed:
+      power: 2200
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /shared
+      - type: disk_use
+        arg: /shared
+      - type: disk_free
+        arg: /shared
+      - type: last_boot
+      - type: memory_free
+      - type: memory_use
+      - type: memory_use_percent
+      - type: processor_use
+      - type: processor_temperature
+      - type: network_in
+        arg: eno1
+      - type: network_out
+        arg: eno1
+  - platform: template
+    sensors:
+      version_check:
+        value_template: "{{ states('sensor.current_version') == states('sensor.docker_hub') }}"
+        friendly_name: "HA UpToDate Checked"
+  - platform: plex_recently_added
+    name: Recently Added Movies
+    token: !secret plex_token
+    host: 119.17.137.221
+    port: 32400
+    max: 1
+    img_dir: /
+    image_resolution: 900
+    section_types:
+      - movie
+  - platform: plex_recently_added
+    name: Recently Added TV
+    token: !secret plex_token
+    host: 119.17.137.221
+    port: 32400
+    max: 1
+    img_dir: /
+    image_resolution: 900
+    section_types:
+      - show
+  - platform: qbittorrent
+    url: "https://qbittorrent.dp-server.duckdns.org/"
+    username: admin
+    password: m23nzgYbY5$Z!pwF9!%nf
 
-spotify:
-  client_id: 3e581b7ce6e1435a9eae8dbc1d7faaa6
-  client_secret: 631f4f698fc74472990d3bace6543abe
+alarm_control_panel:
+  - platform: manual
+    name: Home Alarm
+    arming_time: 30
+    delay_time: 5
+    trigger_time: 400
+    disarmed:
+      trigger_time: 0
+    armed_home:
+      arming_time: 0
+      delay_time: 0
+
+speedtestdotnet:
+  server_id: 10010
+  scan_interval:
+    minutes: 480
+  monitored_conditions:
+    - ping
+    - download
+    - upload
+
+monitor_docker:
+  - name: Docker
+    containers:
+      - plex
+      - organizr
+      - qbittorrent
+      - calibre
+      - readarr
+      - nextcloud
+      - radarr
+      - jackett
+      - ombi
+      - sonarr
+      - tautulli
+      - portainer
+      - homeassistant
+      - nginx
+    rename:
+      plex: Plex
+      organizr: Organizr
+      qbittorrent: QBittorent
+      calibre: Calibre
+      readarr: Readarr
+      nextcloud: NextCloud
+      radarr: Radarr
+      jackett: Jackett
+      ombi: Ombi
+      sonarr: Sonarr
+      tautulli: Tautulli
+      portainer: Portainer
+      homeassistant: HomeAssistant
+      nginx: nginx
+    monitored_conditions:
+      - version
+      - containers_running
+      - containers_total
+      - containers_paused
+      - containers_stopped
+      - containers_memory
+      - uptime
+      - containers_1cpu_percentage
+      - containers_memory_percentage
+      - images
+      - status
+      - network_speed_up
+      - network_speed_down
+      - network_total_up
+      - network_total_down
+
+binary_sensor:
+  - platform: tod
+    name: Morning
+    after: sunrise
+    after_offset: "-02:00"
+    before: "12:00"
+  - platform: tod
+    name: Afternoon
+    after: "12:00"
+    before: sunset
+  - platform: tod
+    name: Evening
+    after: sunset
+    before: "22:00"
+  - platform: tod
+    name: Night
+    after: "22:00"
+    before: sunrise
+    before_offset: "-02:00"
 
 spotcast:
   sp_dc: AQDKnjrkrsUdVkB31swOi8MCyPeSC5mr4FNV5v7w7qi79ZtoVTX89RrLa6-VCDxnWfJuHHevMAXuH114hODPl-8l2MKQcuoHbNFglzC0JNQwkV3xT1Hzg-v-gM-Y2UNL4Ghrl2IpaDAC2FqxsE3NZ0B04uT5-1K5pgq-IMlvbQ
@@ -152,25 +363,6 @@ rest_command:
     headers:
       authorization: !secret ha_api_token
       content-type: 'application/json'
-
-# switch:
-#   - platform: flux
-#     lights:
-#       - light.bedside_lamp
-#     name: Fluxer
-#     start_time: "22:00"
-#     stop_time: "23:00"
-#     start_colortemp: 4000
-#     sunset_colortemp: 3000
-#     stop_colortemp: 1900
-#     disable_brightness_adjust: true
-#     mode: xy
-#     transition: 30
-#     interval: 60
-
-octoprint:
-  host: 192.168.0.11
-  api_key: FCCFFF6337D04EFC8358643D0BB144C6
 
 ios:
   actions:
@@ -222,6 +414,24 @@ ios:
       icon:
         icon: garage-variant
         color: "#ffffff"
+
+template:
+  - sensor:
+    - unique_id: doorbell_battery
+      name: Doorbell Battery
+      state: "{{ states('sensor.doorbell_battery_float')|float * 10 }}"
+    - unique_id: time_of_day
+      name: "Time of Day"
+      state: >
+        {% if is_state('binary_sensor.morning', 'on') %}
+          Morning
+        {% elif is_state('binary_sensor.afternoon', 'on') %}
+          Afternoon
+        {% elif is_state('binary_sensor.evening', 'on') %}
+          Evening
+        {% else %}
+          Night
+        {% endif %}
 
 group: !include groups.yaml
 automation: !include automations.yaml

@@ -1,0 +1,46 @@
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: "Living Room"
+    content:
+      type: vertical-stack
+      cards:
+        - type: custom:mushroom-light-card
+          entity: light.lamp
+          fill_container: false
+          hide_state: false
+          show_brightness_control: true
+          show_color_control: false
+          show_color_temp_control: false
+          collapsible_controls: false
+          use_light_color: false
+        - type: custom:mushroom-vacuum-card
+          entity: vacuum.clean_elizabeth
+          fill_container: true
+          commands:
+            - start_pause
+            - return_home
+            - stop
+          icon: mdi:vacuum
+        - type: media-control
+          entity: media_player.living_room_tv
+        - type: custom:mini-graph-card
+          entities:
+            - entity: sensor.stairs_bottom_sensor_temperature_measurement
+              name: Downstairs
+              color: var(--google-blue)
+          align_state: left
+          font_size: 60
+          font_size_header: 11
+          hours_to_show: 48
+          line_width: 4
+          animate: true
+          points_per_hour: 0.5
+          lower_bound_secondary: 0
+          show:
+            fill: fade
+            graph: line
+            extrema: true
+            name: false
+            icon: false

@@ -1,0 +1,34 @@
+blueprint:
+  name: Garage Open When Coming Home
+  description: Open the garage when we come home after driving out
+  domain: automation
+  input:
+    tracker_entity:
+      name: The persons tracker
+      selector:
+        entity:
+          domain: device_tracker
+    to_open_garage:
+      name: To open the garage
+      selector:
+        entity:
+          domain: input_boolean
+
+trigger:
+  platform: state
+  entity_id: !input 'tracker_entity'
+  from: 'not_home'
+  to: 'home'
+
+condition:
+  condition: state
+  entity_id: !input 'to_open_garage'
+  state: 'on'
+
+action:
+  - service: cover.open_cover
+    target:
+      entity_id: cover.garage_door_msg100_main_channel
+  - service: input_boolean.turn_off
+    target:
+      entity_id: !input 'to_open_garage'

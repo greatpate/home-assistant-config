@@ -1,0 +1,17 @@
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: "Bedroom"
+    content:
+      type: vertical-stack
+      cards:
+        - type: custom:mushroom-light-card
+          entity: light.bedside_lamp
+          fill_container: false
+          hide_state: false
+          show_brightness_control: true
+          show_color_control: true
+          show_color_temp_control: true
+          collapsible_controls: false
+          use_light_color: true

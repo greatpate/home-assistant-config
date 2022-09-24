@@ -1,0 +1,9 @@
+turn_off_bedside_lamp:
+  sequence:
+  - type: turn_off
+    device_id: d6ab278726d16633fbc8c809c4d53cb1
+    entity_id: light.bedside_lamp
+    domain: light
+  mode: single
+  alias: Turn off bedside lamp
+  icon: mdi:lightbulb

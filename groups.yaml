@@ -1,7 +1,7 @@
 everyone:
   name: Everyone
   entities:
-    - device_tracker.pixel_2_xl
+    - device_tracker.dan_s_pixel
     - device_tracker.genn_s_iphone
 
 lights:
@@ -10,3 +10,4 @@ lights:
     - light.bedside_lamp
     - light.lamp
     - light.study_light
+    - light.stair_lights

@@ -1,0 +1,19 @@
+action: fire-dom-event
+browser_mod:
+  service: browser_mod.popup
+  data:
+    title: "Dan's Study"
+    content:
+      type: vertical-stack
+      cards:
+        - type: custom:mushroom-light-card
+          entity: light.study_light
+          fill_container: false
+          hide_state: false
+          show_brightness_control: true
+          show_color_control: false
+          show_color_temp_control: false
+          collapsible_controls: false
+          use_light_color: false
+        - type: media-control
+          entity: media_player.study_tv
