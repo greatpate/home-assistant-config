@@ -15,6 +15,15 @@ browser_mod:
           show_color_temp_control: false
           collapsible_controls: false
           use_light_color: false
+        - type: custom:mushroom-light-card
+          entity: light.stair_lights
+          fill_container: false
+          hide_state: false
+          show_brightness_control: true
+          show_color_control: false
+          show_color_temp_control: false
+          collapsible_controls: false
+          use_light_color: false
         - type: custom:mushroom-vacuum-card
           entity: vacuum.clean_elizabeth
           fill_container: true

@@ -2,8 +2,14 @@
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
+zone:
+  - name: Home
+    latitude: -37.93555204926846
+    longitude: 145.15023942136528
+    radius: 200
+
 homeassistant:
-  external_url: https://greatpate.duckdns.org:8123
+  external_url: https://dp-server.duckdns.org:8123
 
 # Text to speech
 tts:
@@ -12,11 +18,11 @@ tts:
 discovery:
 
 http:
-  ssl_certificate: /dehydrated/certs/greatpate.duckdns.org/fullchain.pem
-  ssl_key: /dehydrated/certs/greatpate.duckdns.org/privkey.pem
+  ssl_certificate: /dehydrated/certs/dp-server.duckdns.org/fullchain.pem
+  ssl_key: /dehydrated/certs/dp-server.duckdns.org/privkey.pem
 
 duckdns: 
-  domain: greatpate
+  domain: dp-server
   access_token: "8366e308-c8b9-4344-b828-9ece84be8de7"
 
 google_assistant:
@@ -30,6 +36,7 @@ google_assistant:
     - cover
     - switch
     - media_player
+    - camera
   secure_devices_pin : "1234"
 
 wake_on_lan: # enables `wake_on_lan` integration
@@ -41,13 +48,7 @@ notify:
 lovelace:
   mode: yaml
   resources:
-    - url: /local/vertical-stack-in-card.js?v=0.4.1
-      type: module
-    - url: /local/mini-graph-card-bundle.js?v=0.10.0
-      type: module
-    - url: /local/mini-media-player-bundle.js?v=1.13.0
-      type: module
-    - url: /local/custom-lovelace/weather-card/weather-card.js
+    - url: /hacsfiles/vertical-stack-in-card/vertical-stack-in-card.js?v=0.4.1
       type: module
     - url: /hacsfiles/google_home_timers_card/googletimers-card.js
       type: module
@@ -105,6 +106,8 @@ lovelace:
       type: module
     - url: /hacsfiles/weather-radar-card/weather-radar-card.js
       type: module
+    - url: /hacsfiles/formulaone-card/formulaone-card.js
+      type: module
 
 frontend:
   themes: !include_dir_merge_named themes
@@ -112,74 +115,6 @@ frontend:
     - /hacsfiles/lovelace-card-mod/card-mod.js
 
 sensor:
-  - platform: energyeasy
-    username: danieljohnpate@gmail.com
-    password: !secret energyeasy_password
-    monitored_variables:
-      - supply_charge
-      - weekday_peak_cost
-      - weekday_offpeak_cost
-      - weekday_shoulder_cost
-      - weekend_offpeak_cost
-      - single_rate_cost
-      - generation_cost
-      - yesterday_user_type
-      - yesterday_usage
-      - yesterday_consumption
-      - yesterday_consumption_peak
-      - yesterday_consumption_offpeak
-      - yesterday_consumption_shoulder
-      - yesterday_generation
-      - yesterday_cost_total
-      - yesterday_cost_consumption
-      - yesterday_cost_generation
-      - yesterday_cost_difference
-      - yesterday_percentage_difference
-      - yesterday_difference_message
-      - yesterday_consumption_difference
-      - yesterday_consumption_change
-      - yesterday_suburb_average
-      - previous_day_usage
-      - previous_day_consumption
-      - previous_day_generation
-      - this_week_user_type
-      - this_week_usage
-      - this_week_consumption
-      - this_week_consumption_peak
-      - this_week_consumption_offpeak
-      - this_week_consumption_shoulder
-      - this_week_generation
-      - this_week_cost_total
-      - this_week_cost_consumption
-      - this_week_cost_generation
-      - this_week_cost_difference
-      - this_week_percentage_difference
-      - this_week_difference_message
-      - this_week_consumption_difference
-      - this_week_consumption_change
-      - this_week_suburb_average
-      - last_week_usage
-      - last_week_consumption
-      - last_week_generation
-      - this_month_user_type
-      - this_month_usage
-      - this_month_consumption
-      - this_month_consumption_peak
-      - this_month_consumption_offpeak
-      - this_month_consumption_shoulder
-      - this_month_generation
-      - this_month_cost_total
-      - this_month_cost_consumption
-      - this_month_cost_generation
-      - this_month_cost_difference
-      - this_month_percentage_difference
-      - this_month_difference_message
-      - this_month_consumption_difference
-      - this_month_consumption_change
-      - this_month_suburb_average
-      - last_month_usage
-      - last_month_consumption
-      - last_month_generation
   - platform: powercalc
     entity_id: light.bedside_lamp
     linear:
@@ -274,15 +209,6 @@ alarm_control_panel:
       arming_time: 0
       delay_time: 0
 
-speedtestdotnet:
-  server_id: 10010
-  scan_interval:
-    minutes: 480
-  monitored_conditions:
-    - ping
-    - download
-    - upload
-
 monitor_docker:
   - name: Docker
     containers:
@@ -358,7 +284,7 @@ spotcast:
 
 rest_command:
   reload_meross:
-    url: "https://greatpate.duckdns.org:8123/api/config/config_entries/entry/c5e70c79506884772702f20c3fa61b1e/reload"
+    url: "https://dp-server.duckdns.org:8123/api/config/config_entries/entry/c5e70c79506884772702f20c3fa61b1e/reload"
     method: POST
     headers:
       authorization: !secret ha_api_token

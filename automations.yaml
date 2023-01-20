@@ -6,7 +6,7 @@
     at: '22:00:00'
   condition:
   - condition: device
-    device_id: 3aab1d30e966e105dcc2aac570130db2
+    device_id: e92215131bed004d9b2146c49bfa2c98
     domain: device_tracker
     entity_id: device_tracker.dan_s_pixel
     type: is_home
@@ -26,8 +26,8 @@
   condition:
   - type: is_plugged_in
     condition: device
-    device_id: 3aab1d30e966e105dcc2aac570130db2
-    entity_id: binary_sensor.pixel_2_xl_is_charging
+    device_id: e92215131bed004d9b2146c49bfa2c98
+    entity_id: binary_sensor.dan_s_pixel_is_charging
     domain: binary_sensor
   action:
   - type: turn_off
@@ -40,7 +40,7 @@
   description: ''
   trigger:
   - platform: device
-    device_id: 3aab1d30e966e105dcc2aac570130db2
+    device_id: e92215131bed004d9b2146c49bfa2c98
     domain: device_tracker
     entity_id: device_tracker.dan_s_pixel
     type: enters
@@ -160,11 +160,11 @@
         - sensor.genn_s_iphone_battery_level
         - sensor.dan_s_pixel_battery_level
       actions:
-      - device_id: 3aab1d30e966e105dcc2aac570130db2
+      - device_id: e92215131bed004d9b2146c49bfa2c98
         domain: mobile_app
         type: notify
-        title: Low Battery
         message: A device has a low battery. Better have a look.
+        title: Low battery
 - id: '1631443634931'
   alias: Stairs bottom light
   description: ''
@@ -172,7 +172,7 @@
     path: freakshock88/motion_illuminance_activated_entity.yaml
     input:
       motion_sensor: binary_sensor.stairs_bottom_sensor_motion
-      target_entity: switch.stair_lights
+      target_entity: light.stair_lights
       no_motion_wait: '2'
       illuminance_sensor: sensor.stairs_bottom_sensor_illuminance
       illuminance_cutoff: input_number.illuminance_cutoff
@@ -183,7 +183,7 @@
     path: freakshock88/motion_illuminance_activated_entity.yaml
     input:
       motion_sensor: binary_sensor.stairs_top_sensor_motion_2
-      target_entity: switch.stair_lights
+      target_entity: light.stair_lights
       illuminance_sensor: sensor.stairs_top_sensor_illuminance_2
       no_motion_wait: '2'
       illuminance_cutoff: input_number.illuminance_cutoff
@@ -220,7 +220,8 @@
   - service: cover.close_cover
     target:
       entity_id: cover.garage_door_msg100_main_channel
-  mode: single
+    data: {}
+  mode: restart
 - id: '1632475209402'
   alias: Notify when washing finished
   description: ''
@@ -238,11 +239,11 @@
     entity_id: person.daniel
     state: home
   action:
-  - device_id: 3aab1d30e966e105dcc2aac570130db2
+  - device_id: e92215131bed004d9b2146c49bfa2c98
     domain: mobile_app
     type: notify
-    title: Washer
     message: Washing is finished
+    title: Washing
   mode: single
 - id: '1632475605963'
   alias: Notify when print is finished
@@ -254,11 +255,11 @@
     to: Operational
   condition: []
   action:
-  - device_id: 3aab1d30e966e105dcc2aac570130db2
+  - device_id: e92215131bed004d9b2146c49bfa2c98
     domain: mobile_app
     type: notify
-    title: Print Finished
-    message: Printer finished
+    message: Printer is finished
+    title: Printer
   mode: single
 - alias: Keep Meross running
   mode: single
@@ -475,6 +476,11 @@
   - service: vacuum.start
     target:
       entity_id: vacuum.clean_elizabeth
+    data: {}
+  - service: input_boolean.turn_on
+    data: {}
+    target:
+      entity_id: input_boolean.has_vacuumed
   mode: single
 - id: '1637837866565'
   alias: Turn on has_vacuumed
@@ -495,7 +501,7 @@
       entity_id: input_boolean.has_vacuumed
   mode: single
 - id: '1637837926699'
-  alias: Turn off has_vacuumed
+  alias: Reset daily booleans
   description: ''
   trigger:
   - platform: time
@@ -504,7 +510,10 @@
   action:
   - service: input_boolean.turn_off
     target:
-      entity_id: input_boolean.has_vacuumed
+      entity_id:
+      - input_boolean.has_vacuumed
+      - input_boolean.daily_chore_1
+    data: {}
   mode: single
 - id: '1637919897939'
   alias: Notify - Green Waste
@@ -519,7 +528,7 @@
       seconds: 0
   condition: []
   action:
-  - device_id: 3aab1d30e966e105dcc2aac570130db2
+  - device_id: e92215131bed004d9b2146c49bfa2c98
     domain: mobile_app
     type: notify
     message: Green Waste
@@ -538,7 +547,7 @@
       seconds: 0
   condition: []
   action:
-  - device_id: 3aab1d30e966e105dcc2aac570130db2
+  - device_id: e92215131bed004d9b2146c49bfa2c98
     domain: mobile_app
     type: notify
     message: Recycling
@@ -555,7 +564,7 @@
     type: enters
     zone: zone.home
   - platform: device
-    device_id: 3aab1d30e966e105dcc2aac570130db2
+    device_id: e92215131bed004d9b2146c49bfa2c98
     domain: device_tracker
     entity_id: device_tracker.dan_s_pixel
     type: enters
@@ -669,7 +678,7 @@
       tracker_entity: device_tracker.dan_s_pixel
       to_close_garage: input_boolean.to_close_garage_dan
       to_open_garage: input_boolean.to_open_garage_dan
-      close_delay: 120
+      close_delay: 20
 - id: '1644024111659'
   alias: Garage Close When Leaving - Gen
   description: ''
@@ -779,11 +788,11 @@
     to: triggered
   condition: []
   action:
-  - device_id: 3aab1d30e966e105dcc2aac570130db2
+  - device_id: e92215131bed004d9b2146c49bfa2c98
     domain: mobile_app
     type: notify
-    message: The alarm has been triggered
     title: Alarm
+    message: The alarm has been triggered
   - repeat:
       while:
       - condition: state
@@ -824,4 +833,89 @@
     data: {}
     target:
       entity_id: alarm_control_panel.home_alarm
+  mode: single
+- id: '1670035757720'
+  alias: Reset weekly booleans
+  description: ''
+  trigger:
+  - platform: time
+    at: 00:00:00
+  condition:
+  - condition: time
+    before: 00:00:00
+    weekday:
+    - mon
+    after: 00:00:00
+  action:
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id:
+      - input_boolean.weekly_chore_1
+      - input_boolean.weekly_chore_2
+      - input_boolean.weekly_chore_3
+  mode: single
+- id: '1670036271567'
+  alias: Reset Monthly booleans
+  description: ''
+  trigger:
+  - platform: time
+    at: 00:00:00
+  condition:
+  - condition: template
+    value_template: '{{ now().day == 1 }}'
+  action: []
+  mode: single
+- id: '1670036441683'
+  alias: Reset fortnightly booleans
+  description: ''
+  trigger:
+  - platform: time
+    at: 00:00:00
+  condition:
+  - condition: template
+    value_template: '{{ now().day == 1 or now().day == 14 }}'
+  action:
+  - service: input_boolean.turn_off
+    data: {}
+    target:
+      entity_id: input_boolean.fortnightly_chore_1
+  mode: single
+- id: '1673343286093'
+  alias: Enable motion detection when away
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - alarm_control_panel.home_alarm
+    to: armed_away
+  condition: []
+  action:
+  - type: turn_on
+    device_id: eb3997254177aff891d4171123942845
+    entity_id: switch.baby_cam_notifications
+    domain: switch
+  - type: turn_on
+    device_id: eb3997254177aff891d4171123942845
+    entity_id: switch.baby_cam_power
+    domain: switch
+  mode: single
+- id: '1673343615517'
+  alias: Disable motion when home
+  description: ''
+  trigger:
+  - platform: state
+    entity_id:
+    - alarm_control_panel.home_alarm
+    to: disarmed
+  condition: []
+  action:
+  - type: turn_off
+    device_id: eb3997254177aff891d4171123942845
+    entity_id: switch.baby_cam_notifications
+    domain: switch
+  - type: turn_off
+    device_id: eb3997254177aff891d4171123942845
+    entity_id: switch.baby_cam_power
+    domain: switch
   mode: single

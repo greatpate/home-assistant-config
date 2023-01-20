@@ -14,6 +14,25 @@ views:
         cards:
         - type: horizontal-stack
           cards:
+          - type: "custom:button-card"
+            entity: lock.front_door
+            template: "custom_card_eraycetinay_lock"
+            name: "Front Door"
+            variables:
+              ulm_custom_card_eraycetinay_lock_tap_control: true
+              ulm_custom_card_eraycetinay_lock_battery_level: sensor.front_door_battery
+              ulm_custom_card_eraycetinay_lock_door_open: sensor.open_closed_sensor_battery
+            triggers_update:
+              - "sensor.front_door_battery"
+              - "sensor.open_closed_sensor_battery"
+          - type: custom:mushroom-entity-card
+            entity: group.lights
+            fill_container: true
+            hide_icon: false
+            icon: mdi:lamps
+            use_entity_picture: false
+        - type: horizontal-stack
+          cards:
             - type: custom:button-card
               template:
                 - card_room
@@ -127,25 +146,17 @@ views:
                   - yellow_on
                 tap_action:
                   action: toggle
-          - type: vertical-stack
-            cards:
-            - type: "custom:button-card"
-              entity: lock.front_door
-              template: "custom_card_eraycetinay_lock"
-              name: "Front Door"
-              variables:
-                ulm_custom_card_eraycetinay_lock_tap_control: true
-                ulm_custom_card_eraycetinay_lock_battery_level: sensor.front_door_battery
-                ulm_custom_card_eraycetinay_lock_door_open: sensor.open_closed_sensor_battery
-              triggers_update:
-                - "sensor.front_door_battery"
-                - "sensor.open_closed_sensor_battery"
-            - type: custom:mushroom-entity-card
-              entity: group.lights
-              fill_container: true
-              hide_icon: false
-              icon: mdi:lamps
-              use_entity_picture: false
+          - type: custom:button-card
+            template:
+              - card_room
+              - green_no_state
+            name: Nursery
+            icon: mdi:cradle
+            tap_action:
+                !include popup/nursery_popup.yaml
+            variables:
+              label_use_temperature: false
+              label_use_brightness: false
       - type: vertical-stack
         cards:
           - type: custom:mushroom-title-card
@@ -182,6 +193,8 @@ views:
                   extrema: true
                   name: true
                   icon: false
+          - type: custom:formulaone-card
+            card_type: countdown
   - theme: Backend-selected
     path: people
     icon: mdi:account
@@ -208,6 +221,74 @@ views:
               - entity: person.daniel
               - entity: person.gen
             dark_mode: true
+  - theme: Backend-selected
+    path: chores
+    icon: mdi:list-status
+    layout:
+      max_width: 700
+    type: custom:vertical-layout
+    badges: []
+    cards:
+      - type: custom:auto-entities
+        card:
+          title: Daily Chores
+          type: grid
+          columns: 2
+          square: false
+        card_param: cards
+        show_empty: false
+        filter:
+          include:
+            - entity_id: "input_boolean.daily_chore_*"
+              state: "off"
+              options:
+                type: custom:button-card
+                template: card_input_boolean
+      - type: custom:auto-entities
+        card:
+          title: Weekly Chores
+          type: grid
+          columns: 2
+          square: false
+        card_param: cards
+        show_empty: false
+        filter:
+          include:
+            - entity_id: "input_boolean.weekly_chore_*"
+              state: "off"
+              options:
+                type: custom:button-card
+                template: card_input_boolean
+      - type: custom:auto-entities
+        card:
+          title: Fortnightly Chores
+          type: grid
+          columns: 2
+          square: false
+        card_param: cards
+        show_empty: false
+        filter:
+          include:
+            - entity_id: "input_boolean.fortnightly_chore_*"
+              state: "off"
+              options:
+                type: custom:button-card
+                template: card_input_boolean
+      - type: custom:auto-entities
+        card:
+          title: Monthly Chores
+          type: grid
+          columns: 2
+          square: false
+        card_param: cards
+        show_empty: false
+        filter:
+          include:
+            - entity_id: "input_boolean.monthly_chore_*"
+              state: "off"
+              options:
+                type: custom:button-card
+                template: card_input_boolean
   - theme: Backend-selected
     title: Media
     path: media
@@ -302,50 +383,6 @@ views:
     icon: mdi:lightning-bolt
     badges: []
     cards:
-      - type: vertical-stack
-        cards:
-          - type: custom:mushroom-title-card
-            title: Weekly Energy
-          - type: horizontal-stack
-            cards:
-              - type: vertical-stack
-                cards:
-                  - type: custom:mushroom-title-card
-                    title: Consumption
-                  - type: custom:mini-graph-card
-                    entities:
-                      - entity: sensor.energyeasy_yesterday_consumption
-                        name: ENERGY CONSUMPTION
-                    show:
-                      graph: bar
-                      name: false
-                      icon: false
-                    name: ENERGY CONSUMPTION
-                    hours_to_show: 168
-                    aggregate_func: max
-                    group_by: date
-                    lower_bound: 5
-                    upper_bound: 20
-                    line_color: var(--google-yellow)
-              - type: vertical-stack
-                cards:
-                  - type: custom:mushroom-title-card
-                    title: Cost
-                  - type: custom:mini-graph-card
-                    entities:
-                      - entity: sensor.energyeasy_yesterday_cost_total
-                        name: ENERGY CONSUMPTION
-                    show:
-                      graph: bar
-                      name: false
-                      icon: false
-                    name: ENERGY CONSUMPTION
-                    hours_to_show: 168
-                    aggregate_func: max
-                    group_by: date
-                    lower_bound: 0.5
-                    upper_bound: 5
-                    line_color: var(--google-yellow)
       - type: vertical-stack
         cards:
           - type: custom:mushroom-title-card
@@ -709,4 +746,45 @@ views:
           - armed_away
         fill_container: false
         show_keypad: true
+  - theme: Backend-selected
+    path: f1
+    icon: mdi:car
+    badges: []
+    type: custom:vertical-layout
+    layout:
+      max_width: 800
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:formulaone-card
+            card_type: next_race
+            title: Next Race
+            date_locale: au
+            image_clickable: true
+          - type: custom:formulaone-card
+            card_type: schedule
+            title: Schedule
+            date_locale: au
+      - type: vertical-stack
+        view_layout:
+          column: 2
+        cards:
+          - type: custom:formulaone-card
+            card_type: constructor_standings
+            title: Constructor Standings
+          - type: custom:formulaone-card
+            card_type: driver_standings
+            title: Driver Standings
+            show_carnumber: true
+            standings:
+              show_flag: true
+              show_team: true
+          - type: custom:formulaone-card
+            card_type: last_result
+            title: Last Result
+            image_clickable: true
+            show_carnumber: true
+          - type: custom:formulaone-card
+            card_type: results
+            title: Results
 button_card_templates: !include_dir_merge_named "custom_components/ui_lovelace_minimalist/__ui_minimalist__/ulm_templates/"
