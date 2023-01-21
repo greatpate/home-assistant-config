@@ -738,6 +738,9 @@ views:
     path: security
     icon: mdi:shield-home
     badges: []
+    type: custom:vertical-layout
+    layout:
+      max_width: 800
     cards:
       - type: custom:mushroom-alarm-control-panel-card
         entity: alarm_control_panel.home_alarm
@@ -746,6 +749,14 @@ views:
           - armed_away
         fill_container: false
         show_keypad: true
+      - type: custom:button-card
+        entity: camera.baby_cam
+        template: "custom_card_camera"
+        show_icon: false
+        variables:
+          ulm_custom_card_camera_title: false
+          ulm_custom_card_camera_name: "Baby Cam"
+          ulm_custom_card_camera_label: "Baby cam"
   - theme: Backend-selected
     path: f1
     icon: mdi:car

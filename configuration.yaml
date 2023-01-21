@@ -23,7 +23,7 @@ http:
 
 duckdns: 
   domain: dp-server
-  access_token: "8366e308-c8b9-4344-b828-9ece84be8de7"
+  access_token: !secret duckdns_token
 
 google_assistant:
   project_id: home-assistant-4f436
@@ -37,7 +37,7 @@ google_assistant:
     - switch
     - media_player
     - camera
-  secure_devices_pin : "1234"
+  secure_devices_pin : !secret google_secure_device_pin
 
 wake_on_lan: # enables `wake_on_lan` integration
 
@@ -194,8 +194,8 @@ sensor:
       - show
   - platform: qbittorrent
     url: "https://qbittorrent.dp-server.duckdns.org/"
-    username: admin
-    password: m23nzgYbY5$Z!pwF9!%nf
+    username: !secret qbit_username
+    password: !secret qbit_password
 
 alarm_control_panel:
   - platform: manual
@@ -279,8 +279,8 @@ binary_sensor:
     before_offset: "-02:00"
 
 spotcast:
-  sp_dc: AQDKnjrkrsUdVkB31swOi8MCyPeSC5mr4FNV5v7w7qi79ZtoVTX89RrLa6-VCDxnWfJuHHevMAXuH114hODPl-8l2MKQcuoHbNFglzC0JNQwkV3xT1Hzg-v-gM-Y2UNL4Ghrl2IpaDAC2FqxsE3NZ0B04uT5-1K5pgq-IMlvbQ
-  sp_key: 867a5739-926d-4e3e-ab1e-68f352914dfd
+  sp_dc: !secret spotcast_sp_dc
+  sp_key: !secret spotcast_sp_key
 
 rest_command:
   reload_meross:
