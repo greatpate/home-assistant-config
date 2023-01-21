@@ -37,6 +37,9 @@
 ![Music](www/img/music.png)
 ![Security](www/img/security.png)
 ![Integrations](www/img/integrations.png)
+![HACS Integrations](www/img/hacs_integrations.png)
+![HACS Front End1](www/img/hacs_frontend1.png)
+![HACS Front End2](www/img/hacs_frontend2.png)
 
 ## 3. Other Links
 
