@@ -2,14 +2,8 @@
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
-zone:
-  - name: Home
-    latitude: -37.93555204926846
-    longitude: 145.15023942136528
-    radius: 200
-
 homeassistant:
-  external_url: https://dp-server.duckdns.org:8123
+  external_url: !secret ha_external_url
 
 # Text to speech
 tts:
@@ -18,11 +12,11 @@ tts:
 discovery:
 
 http:
-  ssl_certificate: /dehydrated/certs/dp-server.duckdns.org/fullchain.pem
-  ssl_key: /dehydrated/certs/dp-server.duckdns.org/privkey.pem
+  ssl_certificate: !secret http_ssl_certificate
+  ssl_key: !secret http_ssl_key
 
 duckdns: 
-  domain: dp-server
+  domain: !secret duckdns_domain
   access_token: !secret duckdns_token
 
 google_assistant:
@@ -175,7 +169,7 @@ sensor:
   - platform: plex_recently_added
     name: Recently Added Movies
     token: !secret plex_token
-    host: 119.17.137.221
+    host: !secret plex_host
     port: 32400
     max: 1
     img_dir: /
@@ -185,7 +179,7 @@ sensor:
   - platform: plex_recently_added
     name: Recently Added TV
     token: !secret plex_token
-    host: 119.17.137.221
+    host: !secret plex_host
     port: 32400
     max: 1
     img_dir: /
@@ -193,7 +187,7 @@ sensor:
     section_types:
       - show
   - platform: qbittorrent
-    url: "https://qbittorrent.dp-server.duckdns.org/"
+    url: !secret qbit_url
     username: !secret qbit_username
     password: !secret qbit_password
 
@@ -282,13 +276,6 @@ spotcast:
   sp_dc: !secret spotcast_sp_dc
   sp_key: !secret spotcast_sp_key
 
-rest_command:
-  reload_meross:
-    url: "https://dp-server.duckdns.org:8123/api/config/config_entries/entry/c5e70c79506884772702f20c3fa61b1e/reload"
-    method: POST
-    headers:
-      authorization: !secret ha_api_token
-      content-type: 'application/json'
 
 ios:
   actions:
